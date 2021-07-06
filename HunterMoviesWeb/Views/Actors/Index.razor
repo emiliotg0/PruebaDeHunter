@@ -1,0 +1,168 @@
+﻿@page "/Organizationslist"
+@using Newtonsoft.Json.Linq
+@using HunterMoviesWeb.Common
+
+<div class="row">
+    <div class="col-10">
+        <h4>Organizations</h4>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-sm btn-primary float-right" @onclick="async ()=>await OpenAddEdit(new Models.CompanyMetaData {Id= Guid.NewGuid().ToString() })">
+            <i class="fa fa-plus"></i>
+        </button>
+    </div>
+    <div class="col-12 mb-4">
+        <div class="card shadow-sm">
+
+            <div class="card-body table-responsive p-0">
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                Nombre  
+                            </th>
+                            <th>
+                                Fecha de nacimiento
+                            </th>
+                            <th>
+                                Sexo
+                            </th>
+                            <th>
+                                Photo
+                            </th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Data)
+                        {
+                            <tr>
+                                <td>
+                                    @item.Nombre
+                                </td>
+
+                                <td>
+                                    @item.BirthDay
+                                </td>
+
+                                <td>
+                                    @item.Sex
+                                </td>
+                                <td>
+                                    @item.Photo
+                                </td>
+
+                                
+                                <td class="text-right">
+                                    <div class="btn-group dropleft  ">
+                                        <button type="button" class="btn btn-default " data-toggle="dropdown">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li class="dropdown-item">
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <button class="btn btn-block" @onclick=" () => OpenAddEdit(item)">
+                                                    Edit
+                                                </button>
+                                            </li>
+                                            <li class="dropdown-divider"></li>
+                                            <li class="dropdown-item">
+                                                <button class="btn btn-block " @onclick="()=> {
+                                                                                             SelectedItem = new Models.CompanyMetaData { Id = item.Id, Name = item.Name };
+                                                                                             Confirm.Show(true);
+                                                                                         }">
+                                                    Delete
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if (ShowAddEdit)
+{
+    <AddEdit Toggle="ToggleAddEdit" Model="@SelectedItem" />
+}
+
+
+@code {
+
+
+    HunterMoviesData.Actors SelectedItem { get; set; } = null;
+    List<HunterMoviesData.Actors> Data { get; set; } = new List<HunterMoviesData.Actors>();
+    bool ShowAddEdit { get; set; }
+
+
+    async Task OpenAddEdit(HunterMoviesData.Actors obj)
+    {
+        System.Diagnostics.Debug.WriteLine(obj);
+        SelectedItem = obj;
+        await ToggleAddEdit();
+    }
+
+
+    async Task ToggleAddEdit()
+    {
+
+        ShowAddEdit = !ShowAddEdit;
+        if (!ShowAddEdit)
+        {
+            await Request();
+        }
+    }
+
+
+
+
+    
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+        await Request();
+    }
+
+
+
+    async Task Request()
+    {
+
+        try
+        {
+            string Query = "Select * from Actors";
+            CustomHttpClient customClient = new CustomHttpClient() { BaseAddress = new Uri("https://localhost:44387/") };
+            IsBusy = true;
+            //var response = await customClient.GetJsonAsync<hunter.Apihelper>("api/Actors/List?" + Query);
+            IsBusy = false;
+
+            if (response.Status == "ok")
+            {
+                Data = (response.Response as JArray).ToObject<List<HunterMoviesData.Actors>>();
+                Data = Data.Where(x => x.Deleted == null).ToList();
+                
+            }
+
+        }
+        catch (Exception ex)
+        {
+
+            System.Diagnostics.Debug.WriteLine(ex);
+        }
+
+    }
+
+}

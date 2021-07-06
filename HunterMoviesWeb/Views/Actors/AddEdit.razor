@@ -1,0 +1,93 @@
+﻿<div id="AddEdit" class="modal blazor fade show" role="dialog" style="display:block">
+    <div class="modal-empty-space" onclick="()=>Toogle.InvokeAsync(false)"></div>
+    <div class="modal-dialog Modstyle" role="document">
+        <div class=" modal-content">
+
+            <EditForm Model="@Model" OnValidSubmit="@HandleSubmit">
+
+                <div class="modal-header">
+                    <h5 class="modal-title text-uppercase">Customer</h5>
+                    <button type="button" class="close" @onclick="()=>Toggle.InvokeAsync(false)" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                    </div>
+                    <div class="row mx-2">
+                        <div class="col-6 my-2">
+                            <label>Nombre</label>
+                            <input @bind-value="Model.Nombre" />
+                            <span asp-validation-for="Nombre" class="text-danger small"></span>
+                            <ValidationMessage For="@(()=>Model.Nombre)" />
+                        </div>
+                        <div class="col-6 my-2">
+                            <label>Birthday</label>
+                            <input @bind-value="Model.BirthDay" />
+                            <span asp-validation-for="Birthday" class="text-danger small"></span>
+                            <ValidationMessage For="@(()=>Model.BirthDay)" />
+                        </div>
+                        <div class="col-6 my-2">
+                            <label>Sex</label>
+                            <input @bind-value="Model.sex" />
+                            <span asp-validation-for="Sex" class="text-danger small"></span>
+                            <ValidationMessage For="@(()=>Model.Sex)" />
+                        </div>
+                        <div class="col-6 my-2">
+                            <label>Photo</label>
+                            <input @bind-value="Model.Photo" />
+                            <span asp-validation-for="Photo" class="text-danger small"></span>
+                            <ValidationMessage For="@(()=>Model.Photo)" />
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary btn-raised">
+                        Save
+                    </button>
+
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@using Newtonsoft.Json.Linq;
+@using Newtonsoft.Json;
+@using HunterMoviesWeb.Common
+
+@code {
+
+
+    [Parameter]
+    public EventCallback Toggle { get; set; }
+    [Parameter]
+    public HunterMoviesData.Actors Model { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+
+        return base.OnInitializedAsync();
+    }
+
+    async Task HandleSubmit()
+    {
+        CustomHttpClient Http = new CustomHttpClient();
+        Http.BaseAddress = new Uri("https://localhost:44387/");
+        var parsedModel = JsonConvert.SerializeObject(Model);
+        var content = new StringContent(parsedModel);
+
+        var response = await Http.PostJsonAsync("api/Actors/AddEdit", Model);
+
+        if (response != null)
+        {
+            await Toggle.InvokeAsync(false);
+        }
+    }
+
+}
