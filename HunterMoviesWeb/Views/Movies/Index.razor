@@ -1,4 +1,4 @@
-﻿@page "/Actors"
+﻿@page "/Movies"
 @using Newtonsoft.Json.Linq
 @using HunterMoviesWeb.Common
 
@@ -20,16 +20,16 @@
                     <thead>
                         <tr>
                             <th>
-                                Nombre  
+                               Titulo  
                             </th>
                             <th>
-                                Fecha de nacimiento
+                                Fecha de lanzamiento
                             </th>
                             <th>
-                                Sexo
+                                Genero
                             </th>
                             <th>
-                                Photo
+                                Foto
                             </th>
                             
                         </tr>
@@ -39,15 +39,15 @@
                         {
                             <tr>
                                 <td>
-                                    @item.Nombre
+                                    @item.Title
                                 </td>
 
                                 <td>
-                                    @item.BirthDay
+                                    @item.ReleaseDate
                                 </td>
 
                                 <td>
-                                    @item.Sex
+                                    @item.Gender
                                 </td>
                                 <td>
                                     @item.Photo
@@ -99,12 +99,12 @@
 @code {
 
 
-    HunterMoviesData.Actors SelectedItem { get; set; } = null;
-    List<HunterMoviesData.Actors> Data { get; set; } = new List<HunterMoviesData.Actors>();
+    HunterMoviesData.Movies SelectedItem { get; set; } = null;
+    List<HunterMoviesData.Movies> Data { get; set; } = new List<HunterMoviesData.Movies>();
     bool ShowAddEdit { get; set; }
 
 
-    async Task OpenAddEdit(HunterMoviesData.Actors obj)
+    async Task OpenAddEdit(HunterMoviesData.Movies obj)
     {
         System.Diagnostics.Debug.WriteLine(obj);
         SelectedItem = obj;
@@ -137,15 +137,15 @@
 
         try
         {
-            string Query = "Select * from Actors";
+            string Query = "Select * from Movies";
             CustomHttpClient customClient = new CustomHttpClient() { BaseAddress = new Uri("https://localhost:44387/") };
             IsBusy = true;
-            //var response = await customClient.GetJsonAsync<hunter.Apihelper>("api/Actors/List?" + Query);
+            //var response = await customClient.GetJsonAsync<hunter.Apihelper>("api/Movies/List?" + Query);
             IsBusy = false;
 
             if (response.Status == "ok")
             {
-                Data = (response.Response as JArray).ToObject<List<HunterMoviesData.Actors>>();
+                Data = (response.Response as JArray).ToObject<List<HunterMoviesData.Movies>>();
                 Data = Data.Where(x => x.Deleted == null).ToList();
 
             }

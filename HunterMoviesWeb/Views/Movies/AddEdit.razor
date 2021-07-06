@@ -19,22 +19,22 @@
                     </div>
                     <div class="row mx-2">
                         <div class="col-6 my-2">
-                            <label>Title</label>
+                            <label>Nombre</label>
                             <input @bind-value="Model.Nombre" />
-                            <span asp-validation-for="Title" class="text-danger small"></span>
-                            <ValidationMessage For="@(()=>Model.Title)" />
+                            <span asp-validation-for="Nombre" class="text-danger small"></span>
+                            <ValidationMessage For="@(()=>Model.Nombre)" />
                         </div>
                         <div class="col-6 my-2">
-                            <label>Release Date</label>
-                            <input @bind-value="Model.ReleaseDate" />
-                            <span asp-validation-for="ReleaseDate" class="text-danger small"></span>
-                            <ValidationMessage For="@(()=>Model.ReleaseDate)" />
+                            <label>Birthday</label>
+                            <input @bind-value="Model.BirthDay" />
+                            <span asp-validation-for="Birthday" class="text-danger small"></span>
+                            <ValidationMessage For="@(()=>Model.BirthDay)" />
                         </div>
                         <div class="col-6 my-2">
-                            <label>Gender</label>
-                            <input @bind-value="Model.Gender" />
-                            <span asp-validation-for="Gender" class="text-danger small"></span>
-                            <ValidationMessage For="@(()=>Model.Gender)" />
+                            <label>Sex</label>
+                            <input @bind-value="Model.sex" />
+                            <span asp-validation-for="Sex" class="text-danger small"></span>
+                            <ValidationMessage For="@(()=>Model.Sex)" />
                         </div>
                         <div class="col-6 my-2">
                             <label>Photo</label>
@@ -67,7 +67,7 @@
     [Parameter]
     public EventCallback Toggle { get; set; }
     [Parameter]
-    public HunterMoviesData.Actors Model { get; set; }
+    public HunterMoviesData.Movies Model { get; set; }
 
     protected override Task OnInitializedAsync()
     {
@@ -82,7 +82,7 @@
         var parsedModel = JsonConvert.SerializeObject(Model);
         var content = new StringContent(parsedModel);
 
-        var response = await Http.PostJsonAsync("api/Actors/AddEdit", Model);
+        var response = await Http.PostJsonAsync("api/Movies/AddEdit", Model);
 
         if (response != null)
         {
